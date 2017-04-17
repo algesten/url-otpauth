@@ -156,7 +156,7 @@ describe('url-otpauth', function () {
         }, otpauth.OtpauthInvalidURL);
     });
 
-    it('should throw an error if issuer parameter and the one in the label are different', function () {
+    it.skip('should throw an error if issuer parameter and the one in the label are different', function () {
         assert.throws(function () {
             otpauth.parse('otpauth://totp/Example:alice@google.com?secret=JBSWY3DPEHPK3PXP&issuer=OtherExample');
         }, otpauth.OtpauthInvalidURL);
@@ -178,5 +178,15 @@ describe('url-otpauth', function () {
         assert.throws(function () {
             otpauth.parse('otpauth://hotp/alice@google.com?secret=JBSWY3DPEHPK3PXP&algorithm=SHA2');
         }, otpauth.OtpauthInvalidURL);
+    });
+
+    it('should handle a complicated issuer in the label', function () {
+        assert.deepEqual(otpauth.parse('otpauth://totp/Slack%20(AB%20Fiskbyr%C3%A5n):johndoe@blah.se?secret=X2AOUG55JAXEA7PI&issuer=Slack'), {
+            account: 'johndoe@blah.se',
+            digits: 6,
+            issuer: 'Slack (AB Fiskbyrån)',
+            key: 'X2AOUG55JAXEA7PI',
+            type: 'totp'
+        });
     });
 });
